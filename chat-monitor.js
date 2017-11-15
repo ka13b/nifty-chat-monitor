@@ -12,7 +12,7 @@
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_log
-// @resource style https://raw.githubusercontent.com/paul-lrr/nifty-chat-monitor/master/chat-monitor.css
+// @resource style file:///D:/dev/nifty-chat-monitor/chat-monitor.css
 // @resource material-icons https://fonts.googleapis.com/icon?family=Material+Icons
 // ==/UserScript==
 
@@ -70,7 +70,17 @@ var configFields = {
     "KeywordHighlightingBackgroundColor": {
         "label" : "Highlight Background Color",
         "type" : "text",
-        "default" : "#560b33" //Its also pink.
+        "default" : "#efef15" //Yellow for emphasis.
+    },
+    "KeywordHighlightingColor": {
+        "label" : "Highlight Color",
+        "type" : "text",
+        "default" : "#000000" //Its black (like my screen).
+    },
+    "KeywordHighlightingFontWeight": {
+        "label" : "Highlight Font-Weight",
+        "type" : "text",
+        "default" : "500" //This is normal.
     },
     "CustomHighlighting": {
         "label" : "",
@@ -201,6 +211,10 @@ function generateKeywordHighlightingCss() {
     //data-message attribute makes everything lowercase, so we do the same to our keywords.
     var keywordsToHighlight = GM_config.get("KeywordsToHighlight").toLowerCase();
     var keywordHighlightBackgroundColor = GM_config.get("KeywordHighlightingBackgroundColor");
+    // The following line is optional. If you choose a background color that would make the text color unreadable this should help.
+    var keywordHighlightColor = GM_config.get("KeywordHighlightingColor"); 
+    // The following line is entirely optional. It might be handy if you want it to stand out.
+    var keywordHighlightFontWeight = GM_config.get("KeywordHighlightingFontWeight"); 
     if(keywordsToHighlight && keywordHighlightBackgroundColor) {
         //Split into array on commas
         var keywordList = keywordsToHighlight.split(",");
@@ -209,6 +223,12 @@ function generateKeywordHighlightingCss() {
             //Add css to variable
             generatedCss += ".chat-lines li[data-message*=\"" + keywordList[i] + "\"] {\n";
             generatedCss += "\tbackground-color: " + keywordHighlightBackgroundColor + " !important;\n";
+            generatedCss += "}\n";
+                        
+            /* The following section is optional for the foreground color and font-weight */
+            generatedCss += ".chat-lines li[data-message*=\"" + keywordList[i] + "\"] .message {\n";
+            generatedCss += "\tcolor: " + keywordHighlightColor + " !important;\n";
+            generatedCss += "\tfont-weight: " + keywordHighlightFontWeight + " !important;\n";
             generatedCss += "}\n";
         }
     }
